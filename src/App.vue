@@ -1,17 +1,22 @@
 <template>
   <div id="app">
-   <Home/>
+   <nav-wrapper default-path="/adminSetting" :menus="menus"></nav-wrapper>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { State } from "vuex-class";
 import Home from "@/components/layout/Home.vue";
+import { MenuList } from "@/store/interface";
+import navWrapper from "iview-comps/components/nav-wrapper/navWrapper.vue";
 @Component({
   components: {
-    Home
+    navWrapper
   }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  @State private menus!: MenuList;
+}
 </script>
 
 <style lang="stylus" scoped>

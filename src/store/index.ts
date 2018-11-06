@@ -2,7 +2,8 @@ import Vue from "vue";
 import Vuex, { Commit, Dispatch } from "vuex";
 
 import home from "./home/index";
-import state, { State } from "./state";
+import state from "./state";
+import { State } from "./interface";
 import mutations from "./mutations";
 import actions from "./actions";
 import getters from "./getters";

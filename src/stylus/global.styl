@@ -1,15 +1,57 @@
 @import '~stylus/variable'
 @import '~stylus/reset'
 @import '~stylus/mixins'
+@import '~@/assets/iconfont/iconfont.css'
 
 .bg
     background-color $baseColor
 .clear:after, .clear:before
     clear()
+.mt-5
+    margin-top(5px)
+.mt-10
+    margin-top(10px)
 .mt-15
-    margin-top 15px
+    margin-top(15px)
+.mt-20
+    margin-top(20px)
+.mb-5
+    margin-bottom(5px)
+.mb-10
+    margin-bottom(10px)
+.mb-15
+    margin-bottom(15px)
+.mb-20
+    margin-bottom(20px)
+.ml-5
+    margin-left(5px)
+.ml-10
+    margin-left(10px)
+.ml-15
+    margin-left(15px)
+.ml-20
+    margin-left(20px)
+.mr-5
+    margin-left(5px)
+.mr-10
+    margin-right(10px)
+.mr-15
+    margin-right(15px)
+.mr-20
+    margin-right(20px)
 .title-top
-    padding 20px
     box-sizing border-box
-    font-size 14px
-    color #333
+    font-size 16px
+    color $titleColor
+    font-weight 600
+.container
+    margin-left(5px)
+.app-content
+    position relative
+.fixButton
+    width 100%
+    position absolute
+    padding 20px
+    bottom 0
+    left 0
+    box-shadow 0 -1px 1px #ccc
