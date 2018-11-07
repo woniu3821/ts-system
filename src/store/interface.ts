@@ -1,4 +1,4 @@
-//菜单
+//===========左侧菜单===========
 export interface MenuList {
   key: string;
   title: string;
@@ -14,12 +14,21 @@ export interface ChildrenList {
   path: string;
   inner?: boolean;
 }
-//表格
-export interface Tablelist {
-  name?: string;
+
+//==============域管理===========
+export interface apiInfo {
+  wid: string;
+  name: string;
+  selected: boolean;
 }
+export interface InterfaceList {
+  categoryId?: string;
+  categoryName?: string;
+  apiRoles?: Array<apiInfo>;
+}
+
+//==================State===============
 export interface State {
-  list: Array<Tablelist>;
   num: number;
   menus: Array<MenuList>;
 }

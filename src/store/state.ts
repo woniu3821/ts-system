@@ -1,7 +1,6 @@
 import { State } from "./interface";
 
 const state: State = {
-  list: [],
   num: 0,
   menus: [
     {
@@ -25,7 +24,17 @@ const state: State = {
       key: "02",
       title: "域管理",
       path: "/domainManage",
-      customIcon: "icon-icon_set_up"
+      customIcon: "icon-icon_set_up",
+      menuLeaf: true,
+      children: [
+        {
+          key: "0201",
+          title: "新增用户组",
+          path: "/addManage",
+          // icon: "ios-cog-outline",
+          inner: true
+        }
+      ]
     },
     {
       key: "03",

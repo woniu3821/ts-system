@@ -1,10 +1,7 @@
 <template>
   <div class="nav-title-bar">
-
-    <slot>
       <i></i><span>{{title}}</span>
-    </slot>
- 
+      <slot name="extra"></slot>
   </div>
 </template>
 
@@ -19,7 +16,7 @@ export default class titleBar extends Vue {
 <style lang="stylus" scoped>
 .nav-title-bar
   font-size 16px
-  color $baseColor
+  color $base-color
   display flex
   align-items center
   &>i

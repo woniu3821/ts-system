@@ -1,0 +1,94 @@
+@import '~stylus/variable'
+
+.section-box
+    display flex
+    .section-l
+        min-height 700px
+        border 1px solid $border-base-color
+        border-radius 4px
+        width 290px
+        flex-shrink 0
+        .top
+            display flex
+            font-size 14px
+            span
+                cursor pointer
+            span:nth-child(2)
+                color $primary-color
+        .domian-list
+            margin-top 20px
+            font-size 12px
+            color $text-color
+            li
+                height 32px
+                line-height 32px
+                padding 0 10px
+                cursor pointer
+            li.active
+                background $bg-color
+                color #fff
+    .section-r
+        border 1px solid $border-base-color
+        border-radius 4px
+        padding 15px
+        overflow hidden
+        flex-grow 1
+        .top
+            font-size 14px
+        .basic-info
+            dl
+                display flex
+                text-align right
+                font-size 12px
+                color $text-color
+                flex-flow row nowrap
+                dt
+                    width 75px
+                    flex-shrink 0
+                dd
+                    text-align left
+        .table-content
+            >>>.ivu-table-tip
+                overflow-x hidden
+            >>>.ivu-tabs-tabpane
+                padding 0 15px
+                // box-sizing border-box
+                overflow hidden
+            .dataTable
+                display flex
+                .left
+                    width 70px
+                    flex-shrink 0
+                    margin-right 20px
+                .right
+                    flex-grow 1
+                    overflow hidden
+                    .title
+                        font-size 12px
+                        height 28px
+                        line-height 28px
+                        background rgba(248, 248, 249, 1)
+                        text-indent 1em
+                        margin-bottom 10px
+                >>>.ivu-menu-item
+                    padding 10px
+                    padding-left 0
+                    font-size 12px
+                    text-align right
+                >>>.ivu-menu-item-active
+                    background #fff
+            .interface
+                border 1px dashed $border-base-color
+                height 140px
+            .interface
+                display flex
+                flex-direction column
+                justify-content center
+                cursor pointer
+                p
+                    text-align center
+                    color $primary-color
+                    font-size 12px
+        .delete-box
+            padding 20px 0
+            border-top 1px solid $border-base-color

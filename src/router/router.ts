@@ -16,6 +16,11 @@ export const routes = [
     component: () => import("@/views/manage/domainManage.vue")
   },
   {
+    path: "/addManage",
+    name: "addManage",
+    component: () => import("@/views/manage/addManage.vue")
+  },
+  {
     path: "/logAudit",
     name: "logAudit",
     component: () => import("@/views/audit/logAudit.vue")

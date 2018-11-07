@@ -11,6 +11,7 @@
                 <Table :columns="columns" :data="tabelList"></Table>
                 <Page class="mt-20" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange" show-total />  
             </Row>
+            
         </div>
     </div>
 </template>
