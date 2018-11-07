@@ -51,7 +51,7 @@
       "@vue/typescript"
     ],
     "rules": {
-
+      "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }]
     },
     "parserOptions": {
       "parser": "typescript-eslint-parser"
