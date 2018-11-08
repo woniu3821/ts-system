@@ -48,8 +48,6 @@
                 dd
                     text-align left
         .table-content
-            >>>.ivu-table-tip
-                overflow-x hidden
             >>>.ivu-tabs-tabpane
                 padding 0 15px
                 // box-sizing border-box
@@ -78,13 +76,14 @@
                 >>>.ivu-menu-item-active
                     background #fff
             .interface
-                border 1px dashed $border-base-color
-                height 140px
-            .interface
                 display flex
                 flex-direction column
                 justify-content center
                 cursor pointer
+                border 1px dashed $border-base-color
+                min-height 140px
+                padding 15px
+                box-sizing border-box
                 p
                     text-align center
                     color $primary-color

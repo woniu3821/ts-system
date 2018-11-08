@@ -33,6 +33,21 @@ const state: State = {
           path: "/addManage",
           // icon: "ios-cog-outline",
           inner: true
+        },
+        {
+          key: "0202",
+          title: "查看用户组",
+          path: "/viewManage",
+          // icon: "ios-cog-outline",
+          inner: true,
+          children: [
+            {
+              path: "/viewHistory",
+              key: "020201",
+              title: "查看导入历史",
+              inner: true
+            }
+          ]
         }
       ]
     },

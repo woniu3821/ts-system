@@ -13,6 +13,7 @@ export interface ChildrenList {
   title: string;
   path: string;
   inner?: boolean;
+  children?: Array<ChildrenList>;
 }
 
 //==============域管理===========

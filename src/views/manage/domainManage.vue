@@ -73,9 +73,17 @@
 
             </TabPane>
             <TabPane label="用户组设置" name="name2">
-              <div class="interface" >
-                <p @click="addUserGroup">+新增用户组</p>
-                <p>您创建的用户组可在所有业务域下使用，但只能由本业务域管理员更新维护</p>
+              <div class="interface">
+                <template v-if="2">
+                  <Row type="flex">
+                    <card-add @click.native="addUserGroup" class="mr-15 mb-15"></card-add>
+                    <group-card @click.native="viewUserGroup" class="mr-15 mb-15"></group-card>
+                  </Row>
+                </template>
+                <template v-else>
+                  <p @click="addUserGroup">+新增用户组</p>
+                  <p>您创建的用户组可在所有业务域下使用，但只能由本业务域管理员更新维护</p>
+                </template>
               </div>
             </TabPane>
           </Tabs>
@@ -114,12 +122,16 @@ import { InterfaceList } from "@/store/interface";
 import titleBar from "@/components/titleBar/titleBar.vue";
 import modalBox from "@/components/modalBox/modalBox.vue";
 import dotBar from "@/components/dotBar/dotBar.vue";
+import groupCard from "@/components/groupCard/groupCard.vue";
+import cardAdd from "@/components/groupCard/cardAdd.vue";
 import { TableColumn } from "iview";
 @Component({
   components: {
     titleBar,
     dotBar,
-    modalBox
+    modalBox,
+    groupCard,
+    cardAdd
   }
 })
 export default class domainManage extends Vue {
@@ -182,6 +194,9 @@ export default class domainManage extends Vue {
   }
   addUserGroup(): void {
     this.$router.push("addManage");
+  }
+  viewUserGroup(): void {
+    this.$router.push("viewManage");
   }
   get dictColumns(): Array<TableColumn> {
     return [
@@ -248,5 +263,5 @@ export default class domainManage extends Vue {
 }
 </script>
 
-<style lang="stylus" src="./index.styl" scoped>
+<style lang="stylus" src="./domain.styl" scoped>
 </style>

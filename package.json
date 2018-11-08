@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.1.4",
+    "@types/jquery": "^3.3.22",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-plugin-typescript": "^3.0.5",
@@ -51,7 +52,12 @@
       "@vue/typescript"
     ],
     "rules": {
-      "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }]
+      "vue/no-parsing-error": [
+        2,
+        {
+          "x-invalid-end-tag": false
+        }
+      ]
     },
     "parserOptions": {
       "parser": "typescript-eslint-parser"

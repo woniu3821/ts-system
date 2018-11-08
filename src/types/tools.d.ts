@@ -1,6 +1,10 @@
 // declare module "navWrapper" {
-//   import navWrapper from "iview-comps/components/nav-wrapper/navWrapper";
+//   import $ from "jquery";
 //   export const navWrapper: any;
 // }
 
-// declare module "navWrapper";
+// declare module "$";
+
+declare module "jquery" {
+  export const $: any;
+}

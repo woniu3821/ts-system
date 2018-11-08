@@ -1,5 +1,5 @@
 <template>
-    <Modal @on-visible-change="change" :value="show" :title="title">
+    <Modal @on-visible-change="change" :width="width" :value="show" :title="title">
         <slot></slot>
         <div slot="footer">
             <ButtonGroup>

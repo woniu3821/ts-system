@@ -1,5 +1,7 @@
 const PRODUCT = process.env.NODE_ENV == "production";
 let path = require("path");
+const webpack = require("webpack");
+
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -36,5 +38,13 @@ module.exports = {
         changeOrigin: true
       }
     }
+  },
+  configureWebpack: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        jQuery: "jquery",
+        $: "jquery"
+      })
+    ]
   }
 };

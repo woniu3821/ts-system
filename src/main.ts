@@ -5,7 +5,7 @@ import store from "./store";
 import "iview/dist/styles/iview.css";
 import "stylus/global.styl";
 import iview from "iview";
-import "jquery"; //引入jquery
+// import $ from "jquery";
 Vue.use(iview);
 
 Vue.config.productionTip = false;
