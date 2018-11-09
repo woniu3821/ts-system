@@ -3,12 +3,13 @@
     <Row class="title-top mb-15">
       查看导入历史
     </Row>
-  
-        <Row>
-            <Table border :columns="historyColumns" :data="historyList"></Table>
-            <Page class="mt-15" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange" show-total />  
-        </Row>
-      </Row>
+
+    <Row>
+      <Table border :columns="historyColumns" :data="historyList"></Table>
+      <Page class="mt-15" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange"
+        show-total />
+    </Row>
+
 
   </div>
 </template>

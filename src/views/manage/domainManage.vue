@@ -7,7 +7,7 @@
       <Row class="section-l mr-20">
         <div class="top mt-15 ml-10">
           <span>域列表</span>
-          <span class="ml-10">+新增域</span>
+          <span class="ml-10" @click="addDomain">+新增域</span>
         </div>
         <ul class="domian-list">
           <li @click="selectDomian(item.value)" :class="{active:isSelect===item.value}" v-for="item in domianList" :key="item.value">{{item.label}}</li>
@@ -47,28 +47,17 @@
                 <dot-bar class="mt-15 mb-10" title="数据表">
                   <div slot="extra" class="extra-btn">点此编辑</div>
                 </dot-bar>
-                <Row class="dataTable">
-                  <Row class="left">
-                    <Menu theme="light" width="70px" active-name="1">
-                      <MenuItem name="1">
-                      文章
-                      </MenuItem>
-                      <MenuItem name="2">
-                      评论管理
-                      </MenuItem>
-                    </Menu>
-                  </Row>
-                  <Row class="right">
-                    <div class="title">表格权限：推送、读取、新增、修改、删除</div>
-                    <Table border :columns="tableColumns" :data="tableData"></Table>
-                  </Row>
-                </Row>
+                <!-- //数据表 -->
+                <dictTable></dictTable>
                 <dot-bar class="mt-15 mb-10" title="接口">
                 </dot-bar>
-                <div class="interface">
+                <div class="interface" v-if="0">
                   <p @click="interfaceShow">+添加接口</p>
                   <p>定义域所包含的应用可以使用的接口</p>
                 </div>
+                <template v-else>
+                  <interface-tag></interface-tag>
+                </template>
               </div>
 
             </TabPane>
@@ -102,13 +91,23 @@
         </CheckboxGroup>
       </Form>
     </modal-box>
-    <modal-box :show.sync="basicModalShow" title="编辑基本信息" :ok="{text:'添加'}">
+    <modal-box :show.sync="basicModalShow" title="编辑基本信息">
       <Form :model="basicForm" :label-width="90">
         <FormItem label="业务域名称" prop="name" :rules="{required: true, message:'业务域名称不能为空', trigger: 'blur'}">
-            <Input v-model="basicForm.name" placeholder=""></Input>
+          <Input v-model="basicForm.name" placeholder=""></Input>
         </FormItem>
         <FormItem label="业务域描述" prop="desc">
-            <Input v-model="basicForm.desc" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
+          <Input v-model="basicForm.desc" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
+        </FormItem>
+      </Form>
+    </modal-box>
+    <modal-box :show.sync="domainModel" title="新增域" :ok="{text:'添加'}">
+      <Form :model="basicForm" :label-width="90">
+        <FormItem label="域名称" prop="name" :rules="{required: true, message:'业务域名称不能为空', trigger: 'blur'}">
+          <Input v-model="basicForm.name" placeholder=""></Input>
+        </FormItem>
+        <FormItem label="域描述" prop="desc">
+          <Input v-model="basicForm.desc" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
         </FormItem>
       </Form>
     </modal-box>
@@ -124,6 +123,8 @@ import modalBox from "@/components/modalBox/modalBox.vue";
 import dotBar from "@/components/dotBar/dotBar.vue";
 import groupCard from "@/components/groupCard/groupCard.vue";
 import cardAdd from "@/components/groupCard/cardAdd.vue";
+import interfaceTag from "@/components/interfaceTag/interfaceTag.vue";
+import dictTable from "@/components/dictTable/dictTable.vue";
 import { TableColumn } from "iview";
 @Component({
   components: {
@@ -131,7 +132,9 @@ import { TableColumn } from "iview";
     dotBar,
     modalBox,
     groupCard,
-    cardAdd
+    cardAdd,
+    interfaceTag,
+    dictTable
   }
 })
 export default class domainManage extends Vue {
@@ -154,6 +157,7 @@ export default class domainManage extends Vue {
       value: 4
     }
   ];
+  private domainModel: boolean = false;
   private basicForm: object = {
     name: "",
     desc: ""
@@ -184,7 +188,7 @@ export default class domainManage extends Vue {
   ];
   interfaceSelect: Array<number> = [];
   dictData: object[] = [];
-  tableData: object[] = [];
+
   interfaceModalShow: boolean = false;
   private interfaceShow(): void {
     this.interfaceModalShow = true;
@@ -197,6 +201,10 @@ export default class domainManage extends Vue {
   }
   viewUserGroup(): void {
     this.$router.push("viewManage");
+  }
+  addDomain(): void {
+    //新增域
+    this.domainModel = true;
   }
   get dictColumns(): Array<TableColumn> {
     return [
@@ -231,30 +239,7 @@ export default class domainManage extends Vue {
       }
     ];
   }
-  get tableColumns(): Array<TableColumn> {
-    return [
-      {
-        title: "字段",
-        key: "jobId"
-      },
-      {
-        title: "读取",
-        key: "name",
-        align: "center"
-      },
 
-      {
-        title: "修改",
-        key: "mobile",
-        align: "center"
-      },
-      {
-        title: "推送",
-        key: "DomainPermission",
-        align: "center"
-      }
-    ];
-  }
   mounted() {
     // setInterval(() => {
     //   this.show = !this.show;

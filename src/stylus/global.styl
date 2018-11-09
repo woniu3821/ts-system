@@ -3,6 +3,13 @@
 @import '~stylus/mixins'
 @import '~@/assets/iconfont/iconfont.css'
 
+@keyframes spin
+    from
+        -webkit-transform rotate(0deg)
+    to
+        -webkit-transform rotate(360deg)
+.loading
+    animation spin 1.8s linear infinite
 .ivu-table-tip
     overflow-x hidden
 .clear:after, .clear:before

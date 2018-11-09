@@ -30,17 +30,18 @@
         <Row type="flex" align="middle" justify="space-between" class="mt-15 mb-10">
           <Row>
             <Button type="primary" @click="addModal" class="mr-20">新增成员</Button>
-            <Button>导入成员</Button>
+            <Button @click="insertModal">导入成员</Button>
           </Row>
           <div @click="viewHistory" class="base-text">
             查看导入历史
           </div>
         </Row>
         <Row>
-            <Table border :columns="groupColumns" :data="groupData"></Table>
-            <Page class="mt-15" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange" show-total />  
+          <Table border :columns="groupColumns" :data="groupData"></Table>
+          <Page class="mt-15" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange"
+            show-total />
         </Row>
-       
+
       </Row>
     </div>
     <!-- <Modal class="group-modal" v-model="groupModal" width="700" title="预览成员" @on-visible-change="groupModalChanges">
@@ -62,8 +63,30 @@
       </Form>
     </modal-box>
     <modal-box width="1200" :show.sync="addModalShow" title="新增成员">
-     <group-box :modal="true"></group-box>
+      <group-box :modal="true"></group-box>
     </modal-box>
+    <Modal class="insert-modal" width="400" v-model="inserModalShow" title="导入用户组成员">
+      <Row type="flex" class="steps-box">
+        <Steps class="steps" direction="vertical">
+          <Step status="process" title="下载Excel导入模板" content="请务必使用该模板填写用户组成员信息"></Step>
+          <Step status="process" title="上传已经填入信息的Excel" content="若学号相同，导入数据将会覆盖原有数据！"></Step>
+          <Step status="process" title="系统自动导入" content="并显示导入结果"></Step>
+        </Steps>
+        <div class="insert-right">
+          <Upload multiple action="//jsonplaceholder.typicode.com/posts/">
+            <Button><Icon custom="iconfont icon-yunduanxiazai" size="16" color="#777" /><span class="ml-5">下载</span></Button>
+          </Upload>
+          <Upload multiple action="//jsonplaceholder.typicode.com/posts/">
+            <Button type="success"><Icon custom="iconfont icon-shangchuan"  size="14" color="#fff" /><span class="ml-5">上传</span></Button>
+          </Upload>
+          <div class="inser-loading"><label>导入中...</label><Icon custom="iconfont icon-loading loading"  size="28" color="#B4B7BE" /></div>
+        </div>
+      </Row>
+
+      <div slot="footer" style="dispaly:none">
+
+      </div>
+    </Modal>
   </div>
 </template>
 <script lang="ts">
@@ -91,6 +114,7 @@ export default class viewUserGroup extends Vue {
   groupData: object[] = [];
   editModalShow: boolean = false;
   addModalShow: boolean = false;
+  inserModalShow: boolean = false;
   private groupBasicForm: object = {
     type: 1,
     name: "",
@@ -131,6 +155,9 @@ export default class viewUserGroup extends Vue {
   }
   private addModal(): void {
     this.addModalShow = true;
+  }
+  private insertModal(): void {
+    this.inserModalShow = true;
   }
   private viewHistory(): void {
     this.$router.push("/viewHistory");
