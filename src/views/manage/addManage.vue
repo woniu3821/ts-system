@@ -115,6 +115,7 @@ import { TableColumn } from "iview";
   }
 })
 export default class addManage extends Vue {
+  @Action private MANAGER_QUERY!: () => AxiosPromise;
   @Watch("groupForm.type")
   private watchGroupType(now: number) {}
   groupModal: boolean = false;
@@ -164,10 +165,14 @@ export default class addManage extends Vue {
       }
     ];
   }
+
   mounted() {
     // setInterval(() => {
     //   this.show = !this.show;
     // }, 1000);
+  }
+  created() {
+    // console.log(3333);
   }
 }
 </script>

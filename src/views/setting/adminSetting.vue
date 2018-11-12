@@ -9,21 +9,45 @@
             </Row>
             <Row>
                 <Table :columns="columns" :data="tabelList"></Table>
-                <Page class="mt-15" :total="100" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange" show-total />  
+                <Page class="mt-15" :total="totalSize" show-elevator show-sizer @on-change="pageNumChange" @on-page-size-change="pageSizeChange" show-total />  
             </Row>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Base } from "@/model/base";
 import { Action, Getter } from "vuex-class";
 import { AxiosPromise, AxiosResponse } from "axios";
+import { Page, listData } from "@/store/interface";
+import { Component, Watch } from "vue-property-decorator";
 @Component
-export default class adminSetting extends Vue {
-  // data
+export default class Manage extends Base {
+  @Action private MANAGER_QUERY!: (pageInfo: Page) => Promise<listData>;
+  @Watch("pageInfo", {
+    deep: true
+  })
+  pageInfoChange(): void {
+    this.getTableList();
+  }
+  private watchNumber() {}
+  private watchSize() {}
+  private addNewAdmin(): void {
+    this.$router.push("addAdmin");
+  }
+  private totalSize: number = 0;
   private tabelList: Array<any> = [];
-  // computed
-  get columns() {
+  private getTableList() {
+    this.MANAGER_QUERY(this.pageInfo)
+      .then(res => {
+        this.totalSize = res.totalSize;
+        this.tabelList = res.rows;
+      })
+      .catch(err => {
+        let msg = err || "获取管理员列表失败！";
+        this.error(msg);
+      });
+  }
+  private get columns() {
     // debugger;
     return [
       {
@@ -56,12 +80,9 @@ export default class adminSetting extends Vue {
       }
     ];
   }
-  //methods
-  private addNewAdmin(): void {
-    this.$router.push("addAdmin");
+  private mounted() {
+    this.getTableList();
   }
-  private pageNumChange(num: number): void {}
-  private pageSizeChange(num: number): void {}
 }
 </script>
 

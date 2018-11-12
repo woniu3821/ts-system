@@ -10,7 +10,7 @@
           <span class="ml-10" @click="addDomain">+新增域</span>
         </div>
         <ul class="domian-list">
-          <li @click="selectDomian(item.value)" :class="{active:isSelect===item.value}" v-for="item in domianList" :key="item.value">{{item.label}}</li>
+          <li @click="selectDomian(item.domainId)" :class="{active:isSelect===item.domainId}" v-for="item in domainList" :key="item.domainId">{{item.domainName}}</li>
         </ul>
       </Row>
       <Row class="section-r">
@@ -117,7 +117,8 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import { AxiosPromise, AxiosResponse } from "axios";
-import { InterfaceList } from "@/store/interface";
+import { InterfaceList, domainBean } from "@/store/interface";
+import { Error } from "@/model/base";
 import titleBar from "@/components/titleBar/titleBar.vue";
 import modalBox from "@/components/modalBox/modalBox.vue";
 import dotBar from "@/components/dotBar/dotBar.vue";
@@ -137,26 +138,20 @@ import { TableColumn } from "iview";
     dictTable
   }
 })
-export default class domainManage extends Vue {
+export default class domainManage extends Error {
+  @Action private DOMAIN_APPS!: () => Promise<any>;
+  private getdomainList() {
+    this.DOMAIN_APPS()
+      .then(res => {
+        this.domainList = res;
+      })
+      .catch(err => {
+        let msg = "获取域列表失败！" || err;
+        this.error(msg);
+      });
+  }
+  private domainList: Array<domainBean> = [];
   private isSelect: number = 1;
-  private domianList: object[] = [
-    {
-      label: "域列表",
-      value: 1
-    },
-    {
-      label: "域列表1",
-      value: 2
-    },
-    {
-      label: "域列表2",
-      value: 3
-    },
-    {
-      label: "域列表3",
-      value: 4
-    }
-  ];
   private domainModel: boolean = false;
   private basicForm: object = {
     name: "",
@@ -240,10 +235,8 @@ export default class domainManage extends Vue {
     ];
   }
 
-  mounted() {
-    // setInterval(() => {
-    //   this.show = !this.show;
-    // }, 1000);
+  private mounted() {
+    this.getdomainList();
   }
 }
 </script>

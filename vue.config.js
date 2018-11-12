@@ -33,8 +33,8 @@ module.exports = {
         // ws: true,
         changeOrigin: true
       },
-      "/ts": {
-        target: "https://www.easy-mock.com",
+      "/wec-smmp-sinfo": {
+        target: "http://172.16.9.101:8082",
         changeOrigin: true
       }
     }

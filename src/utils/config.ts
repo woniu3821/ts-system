@@ -8,19 +8,19 @@ let headers = {
   "Content-Type": "application/json",
   "X-Requested-With": "XMLHttpRequest"
 };
-if (process.env.NODE_ENV == "development") {
-  headers = Object.assign({}, headers, {
-    wecSchoolId: 1019429679435008,
-    wecUserInfo: JSON.stringify({
-      userAccount: "123123",
-      userName: "admin1",
-      userId: "72786"
-    })
-  });
-}
+// if (process.env.NODE_ENV == "development") {
+//   headers = Object.assign({}, headers, {
+//     wecSchoolId: 1019429679435008,
+//     wecUserInfo: JSON.stringify({
+//       userAccount: "123123",
+//       userName: "admin1",
+//       userId: "72786"
+//     })
+//   });
+// }
 
 const axiosConfig: AxiosRequestConfig = {
-  baseURL: PRODUCT ? "/wec-user-mngt" : "/mock/5bdbe73fedc1b37905bfd6aa/ts",
+  baseURL: PRODUCT ? "/wec-smmp-sinfo" : "/wec-smmp-sinfo",
   headers: headers,
   // 请求后的数据处理
   transformResponse: [
