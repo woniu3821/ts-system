@@ -1,4 +1,4 @@
-import { TABLE_POST } from "./types";
+import { TABLE_POST, LOADINF_SHOW } from "./types";
 import { MutationTree } from "vuex";
 
 const mutations: MutationTree<any> = {
@@ -10,6 +10,9 @@ const mutations: MutationTree<any> = {
   },
   reduce(state) {
     state.num--;
+  },
+  [LOADINF_SHOW](state, data) {
+    state.loading = data;
   }
 };
 

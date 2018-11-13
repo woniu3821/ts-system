@@ -1,6 +1,7 @@
 import axios from "axios";
 import config from "./config";
 import { AxiosRequestConfig } from "axios";
+import store from "@/store/index";
 // 取消重复请求
 let pending: Array<{
   url: string;

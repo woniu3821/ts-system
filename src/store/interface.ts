@@ -25,7 +25,27 @@ export interface ChildrenList {
   inner?: boolean;
   children?: Array<ChildrenList>;
 }
+//===============管理员==============
 
+export interface manageList {
+  wid: string;
+  userName: string;
+  userDepartmentCode: string;
+  userDepartment: string;
+  userAccount: string;
+  phoneNumber: string;
+  menuPermission: string;
+  domainPermission: string;
+}
+export interface namageDetailInfo {
+  userInfo: userBean;
+  apps: Array<appsBean>;
+  domains: Array<domainBean>;
+}
+
+export interface userBean {
+  userId: string;
+}
 //==============域管理===========
 export interface apiInfo {
   wid: string;
@@ -41,24 +61,41 @@ export interface InterfaceList {
 //   superAppId: string;
 //   superAppName: string;
 // }
-
-export interface domainBean {
-  domainId: string;
-  domainName: string;
+export interface domainForm {
+  domain: domainBean;
+}
+export interface appsBean {
+  appId: string;
+  appName: string;
   description: string;
   isSelected: boolean;
+}
+export interface domainBean {
+  domainId?: string;
+  domainName: string;
+  appType?: number;
+  isSelected?: boolean;
+  description?: string;
+}
+export interface supperAppBean {
+  superAppId: string;
+  superAppName: string;
 }
 export interface SettingBase {
   indeterminate: boolean;
   checkAll: boolean;
+  allDisabled: boolean;
   checkAllList: Array<any>;
-  checkAllGroup: Array<string>;
+  checkAllGroup: Array<any>;
   handleCheckAll: Function;
   checkAllGroupChange: Function;
+  all: Function;
+  disabled: Function;
 }
 //==================State===============
 export interface State {
   num: number;
+  loading: boolean; //全局loading
   menus: Array<MenuList>;
 }
 

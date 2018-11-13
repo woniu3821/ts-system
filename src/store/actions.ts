@@ -6,7 +6,11 @@ import {
   MANAGER_ADD,
   MANAGE_BASE_APPS,
   DOMAIN_APPS,
-  DOMAIN_MANAGER
+  MANAGE_DELETE,
+  MANAGE_DETAIL,
+  DOMAIN_ADD,
+  DOMAIN_BASIC_DEATIL,
+  DOMAIN_SUPPER_APP_LIST
 } from "./types";
 import { ActionTree } from "vuex";
 import ajax from "@/utils/api";
@@ -64,6 +68,30 @@ const actions: ActionTree<any, any> = {
       }
     });
   },
+  //删除管理员
+  async [MANAGE_DELETE]({ commit }, data) {
+    const res = await ajax.post("/manager/deleteManager", data);
+    return new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.code == 0) {
+        resolve();
+      } else {
+        reject(res.data.message);
+      }
+    });
+  },
+  //查询管理员详情
+  async [MANAGE_DETAIL]({ commit }, data) {
+    const res = await ajax.post("/manager/getManagerDetail", data);
+    return new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.code == 0) {
+        resolve(res.data.datas);
+      } else {
+        reject(res.data.message);
+      }
+    });
+  },
+
+  // ====================域管理==========================
   //菜单权限
   async [MANAGE_BASE_APPS]({ commit }, data) {
     const res = await ajax.post("/manager/getBaseApps", data);
@@ -86,7 +114,40 @@ const actions: ActionTree<any, any> = {
       }
     });
   },
-  // ====================域管理==========================
+  //新增域
+  async [DOMAIN_ADD]({ commit }, data) {
+    const res = await ajax.post("/domainmanager/addDomain", data);
+    return new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.code == 0) {
+        resolve(res.data.datas);
+      } else {
+        reject(res.data.message);
+      }
+    });
+  },
+  //获取域基本信息
+  async [DOMAIN_BASIC_DEATIL]({ commit }, data) {
+    const res = await ajax.post("/domain/view", data);
+    return new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.code == 0) {
+        resolve(res.data.datas.rows);
+      } else {
+        reject(res.data.message);
+      }
+    });
+  },
+  //获取域基本信息
+  async [DOMAIN_SUPPER_APP_LIST]({ commit }, data) {
+    const res = await ajax.post("/domainmanager/containSuperAppList", data);
+    return new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.code == 0) {
+        resolve(res.data.datas);
+      } else {
+        reject(res.data.message);
+      }
+    });
+  },
+
   //获取域列表
   reduce({ commit }) {
     commit("reduce");

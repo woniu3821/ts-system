@@ -1,7 +1,7 @@
 <template>
   <div>
     <Row class="title-top mb-15">
-      新增管理员
+      {{wid?'编辑管理员':'新增管理员'}}
     </Row>
     <div class="container">
       <Row class="mb-10">
@@ -12,7 +12,7 @@
           <FormItem prop="userId" required label="选择用户" :rules="{required: true, message: '请搜索选择用户', trigger: 'change'}">
             <Select style="width:360px" v-model="manageAddForm.userId" filterable remote :remote-method="remoteSelect" :loading="remoteLoading"
               placeholder="请输入工号、姓名以搜索">
-              <Option v-for="option in   selectList" :value="option.userId" :key="option.userId">{{option.userId}}（{{option.userName}}）</Option>
+              <Option v-for="option in selectList" :value="option.userId" :key="option.userId">{{option.userId}}({{option.userName}})</Option>
             </Select>
           </FormItem>
         </Form>
@@ -49,13 +49,13 @@
           </p>
           <Row class="permissions-content">
             <div class="select-all">
-              <Checkbox :indeterminate="domainSpace.indeterminate" :value="domainSpace.checkAll" @click.prevent.native="domainSpace.handleCheckAll">全选</Checkbox>
+              <Checkbox :indeterminate="domainSpace.indeterminate" :disabled="domainSpace.allDisabled" :value="domainSpace.checkAll" @click.prevent.native="domainSpace.handleCheckAll">全选</Checkbox>
             </div>
             <div class="check-content">
               <CheckboxGroup v-model="domainSpace.checkAllGroup" @on-change="domainCheckAllGroupChange">
                 <Row>
                  <Col span="8"  v-for="item in domainSpace.checkAllList" :key="item.domainId" >
-                    <Checkbox :label="item.domainId">
+                    <Checkbox :disabled="item.isSelected" :label="item.domainId">
                     {{item.domainName}}</Checkbox>
                  </Col>
                 </Row>
@@ -73,15 +73,21 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import { Setting } from "@/model/base";
 import { AxiosPromise, AxiosResponse } from "axios";
 import { selectList } from "./interface";
-import { adminQueryInfo, listData, manageAdd } from "@/store/interface";
+import {
+  adminQueryInfo,
+  listData,
+  manageAdd,
+  namageDetailInfo
+} from "@/store/interface";
 import titleBar from "@/components/titleBar/titleBar.vue";
 import Manage from "@/views/setting/adminSetting.vue";
 import { Form } from "iview";
+import { RouteRecord } from "vue-router";
 @Component({
   components: {
     titleBar
@@ -89,12 +95,44 @@ import { Form } from "iview";
 })
 export default class addAdmin extends Setting {
   // data
-  @Action
-  private MANAGER_USER_QUERY!: (queryInfo: adminQueryInfo) => Promise<listData>;
-  @Action private MANAGER_ADD!: (addInfo: manageAdd) => Promise<any>;
   public $refs!: {
     manageAddFormRef: Form;
   };
+  @Action
+  private MANAGER_USER_QUERY!: (queryInfo: adminQueryInfo) => Promise<listData>;
+  @Action private MANAGER_ADD!: (addInfo: manageAdd) => Promise<any>;
+  @Action private MANAGE_DETAIL!: (wid: object) => Promise<namageDetailInfo>;
+
+  @Watch("baseSpace.checkAllGroup")
+  private watchBase(value: string[]) {
+    if (value.includes("80020")) {
+      this.domainSpace.disabled(false);
+    } else {
+      this.domainSpace.disabled(true);
+    }
+    if (this.wid && this.timers === 1) {
+      this.timers++;
+      return;
+    }
+    this.domainSpace.checkAllGroup = [];
+  }
+  private timers: number = 1;
+  private wid: string = "";
+  private init(): void {
+    this.wid = this.$route.params.wid;
+    if (this.wid != "") {
+      this.MANAGE_DETAIL({ wid: this.wid }).then(res => {
+        this.manageAddForm.userId = res.userInfo.userId;
+        this.baseSpace.checkAllGroup = res.apps.map(
+          item => item.isSelected && item.appId
+        );
+        this.domainSpace.checkAllGroup = res.domains.map(
+          item => item.isSelected && item.domainId
+        );
+      });
+      this.getUserList();
+    }
+  }
   private domaList: object[] = [];
   private adminQueryInfo: adminQueryInfo = {
     keyword: "",
@@ -136,14 +174,17 @@ export default class addAdmin extends Setting {
   private addManage(): void {
     this.$refs.manageAddFormRef.validate(valid => {
       if (valid) {
+        this.loading(true);
         this.manageAddForm.selectedAppIds = this.baseSpace.checkAllGroup;
         this.manageAddForm.selectedDomainIds = this.domainSpace.checkAllGroup;
         this.MANAGER_ADD(this.manageAddForm)
           .then(res => {
-            this.success("新增管理员成功！");
+            this.success(this.wid ? "编辑管理员成功！" : "新增管理员成功！");
+            this.$router.push("adminSetting");
+            this.loading(false);
           })
           .catch(err => {
-            let msg = err || "新增管理员失败！";
+            let msg = err || this.wid ? "编辑管理员失败！" : "新增管理员失败！";
             this.error(msg);
           });
       }
@@ -152,19 +193,25 @@ export default class addAdmin extends Setting {
   // computed
   //methods
   private remoteSelect(value: string): void {
-    this.adminQueryInfo.keyword = value;
+    let keyword = value;
+    if (/.*\(.*/.test(value)) {
+      keyword = keyword.split("(")[0];
+    }
+    this.adminQueryInfo.keyword = keyword;
     if (this.timer) {
       clearTimeout(this.timer);
     }
     this.timer = setTimeout(() => {
       this.getUserList();
-    }, 50);
+    }, 30);
   }
 
   private cancel(): void {
     this.$router.push("adminSetting");
   }
-
+  mounted() {
+    this.init();
+  }
   beforeDetory() {
     clearTimeout(this.timer);
   }

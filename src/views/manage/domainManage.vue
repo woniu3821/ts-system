@@ -10,7 +10,7 @@
           <span class="ml-10" @click="addDomain">+新增域</span>
         </div>
         <ul class="domian-list">
-          <li @click="selectDomian(item.domainId)" :class="{active:isSelect===item.domainId}" v-for="item in domainList" :key="item.domainId">{{item.domainName}}</li>
+          <li @click="selectDomian(item.domainId)" :class="{active:domainId===item.domainId}" v-for="item in domainList" :key="item.domainId">{{item.domainName}}</li>
         </ul>
       </Row>
       <Row class="section-r">
@@ -23,15 +23,15 @@
         <Row class="basic-info">
           <dl class="mt-20">
             <dt class="mr-15">域名称</dt>
-            <dd>测试域</dd>
+            <dd>{{domainInfo.domainName}}</dd>
           </dl>
           <dl class="mt-20">
             <dt class="mr-15">域描述</dt>
-            <dd>测试域</dd>
+            <dd>{{domainInfo.description}}</dd>
           </dl>
           <dl class="mt-20">
             <dt class="mr-15">包含应用</dt>
-            <dd>测试域测试域测试域测试域测试域测</dd>
+            <dd>{{supperList}}</dd>
           </dl>
         </Row>
         <Row class="table-content mt-20">
@@ -91,23 +91,13 @@
         </CheckboxGroup>
       </Form>
     </modal-box>
-    <modal-box :show.sync="basicModalShow" title="编辑基本信息">
-      <Form :model="basicForm" :label-width="90">
-        <FormItem label="业务域名称" prop="name" :rules="{required: true, message:'业务域名称不能为空', trigger: 'blur'}">
-          <Input v-model="basicForm.name" placeholder=""></Input>
+    <modal-box @on-change="modelChange" @on-ok="addDomainSure" :show.sync="domainModel" :title="editBasic?'编辑基本信息':'新增域'" :ok="{text:editBasic?'确认':'添加'}">
+      <Form :model="domainForm" ref="domainFormRef" :rules="domainFormValidate" :label-width="90">
+        <FormItem label="域名称" prop="domainName">
+          <Input v-model="domainForm.domainName" placeholder=""></Input>
         </FormItem>
-        <FormItem label="业务域描述" prop="desc">
-          <Input v-model="basicForm.desc" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
-        </FormItem>
-      </Form>
-    </modal-box>
-    <modal-box :show.sync="domainModel" title="新增域" :ok="{text:'添加'}">
-      <Form :model="basicForm" :label-width="90">
-        <FormItem label="域名称" prop="name" :rules="{required: true, message:'业务域名称不能为空', trigger: 'blur'}">
-          <Input v-model="basicForm.name" placeholder=""></Input>
-        </FormItem>
-        <FormItem label="域描述" prop="desc">
-          <Input v-model="basicForm.desc" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
+        <FormItem label="域描述" prop="description">
+          <Input v-model="domainForm.description" type="textarea" :autosize="{minRows: 5,maxRows: 7}" placeholder=""></Input>
         </FormItem>
       </Form>
     </modal-box>
@@ -117,7 +107,12 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import { AxiosPromise, AxiosResponse } from "axios";
-import { InterfaceList, domainBean } from "@/store/interface";
+import {
+  InterfaceList,
+  domainBean,
+  domainForm,
+  supperAppBean
+} from "@/store/interface";
 import { Error } from "@/model/base";
 import titleBar from "@/components/titleBar/titleBar.vue";
 import modalBox from "@/components/modalBox/modalBox.vue";
@@ -126,7 +121,7 @@ import groupCard from "@/components/groupCard/groupCard.vue";
 import cardAdd from "@/components/groupCard/cardAdd.vue";
 import interfaceTag from "@/components/interfaceTag/interfaceTag.vue";
 import dictTable from "@/components/dictTable/dictTable.vue";
-import { TableColumn } from "iview";
+import { TableColumn, Form } from "iview";
 @Component({
   components: {
     titleBar,
@@ -139,28 +134,47 @@ import { TableColumn } from "iview";
   }
 })
 export default class domainManage extends Error {
+  public $refs!: {
+    domainFormRef: Form;
+    basicForm: Form;
+  };
   @Action private DOMAIN_APPS!: () => Promise<any>;
-  private getdomainList() {
-    this.DOMAIN_APPS()
-      .then(res => {
-        this.domainList = res;
-      })
-      .catch(err => {
-        let msg = "获取域列表失败！" || err;
-        this.error(msg);
-      });
+  @Action
+  private DOMAIN_BASIC_DEATIL!: (
+    domainId: { domainId: string }
+  ) => Promise<Array<domainBean>>;
+  @Action private DOMAIN_ADD!: (domainForm: domainForm) => Promise<any>;
+  @Action
+  private DOMAIN_SUPPER_APP_LIST!: (
+    domainId: { domainId: string }
+  ) => Promise<Array<supperAppBean>>;
+  @Watch("domainId")
+  private watchDomainId(value: string) {
+    if (value !== "") {
+      this.getDomianBasic();
+    }
   }
   private domainList: Array<domainBean> = [];
-  private isSelect: number = 1;
+  private domainId: string = "";
   private domainModel: boolean = false;
+  private editBasic: boolean = false;
   private basicForm: object = {
     name: "",
     desc: ""
   };
+  private domainForm: domainBean = {
+    domainName: "",
+    description: ""
+  };
+  private domainInfo: domainBean = {
+    domainName: "",
+    description: ""
+  };
+  private supperAppList: Array<supperAppBean> = [];
   private basicModalShow: boolean = false;
   private formInterface: object = {};
-  private selectDomian(value: number): void {
-    this.isSelect = value;
+  private selectDomian(value: string): void {
+    this.domainId = value;
   }
   //  接口列表
   interfaceList: Array<InterfaceList> = [
@@ -189,17 +203,85 @@ export default class domainManage extends Error {
     this.interfaceModalShow = true;
   }
   private basicShow(): void {
-    this.basicModalShow = true;
+    this.editBasic = true;
+    this.domainForm = Object.assign({}, this.domainInfo);
+    this.domainModel = true;
   }
-  addUserGroup(): void {
+  private addUserGroup(): void {
     this.$router.push("addManage");
   }
-  viewUserGroup(): void {
+  private viewUserGroup(): void {
     this.$router.push("viewManage");
   }
-  addDomain(): void {
+  private addDomain(): void {
     //新增域
+    this.editBasic = false;
     this.domainModel = true;
+  }
+  private getDomianBasic() {
+    this.DOMAIN_BASIC_DEATIL({ domainId: this.domainId }).then(res => {
+      this.domainInfo = res[0];
+    });
+    this.DOMAIN_SUPPER_APP_LIST({ domainId: this.domainId }).then(res => {
+      this.supperAppList = res;
+    });
+  }
+  modelChange() {
+    this.$refs.domainFormRef.resetFields();
+  }
+  private addDomainSure() {
+    this.$refs.domainFormRef.validate(valid => {
+      if (valid) {
+        this.loading(true);
+        if (this.editBasic) {
+          this.domainForm.domainId = this.domainId;
+        } else {
+          delete this.domainForm.domainId;
+        }
+        this.DOMAIN_ADD({ domain: this.domainForm })
+          .then(async res => {
+            this.success(this.editBasic ? "编辑成功" : "添加成功！");
+            this.loading(false);
+            this.getdomainList();
+            this.domainModel = false;
+            this.domainId = res.domainId;
+          })
+          .catch(err => {
+            this.domainModel = false;
+            let msg = err || this.editBasic ? "编辑失败" : "添加失败！";
+            this.error(msg);
+          });
+      }
+    });
+  }
+  private getdomainList() {
+    this.DOMAIN_APPS()
+      .then(res => {
+        this.domainList = res;
+        if (this.editBasic) {
+          this.getDomianBasic();
+          return;
+        }
+        this.domainId = res[0].domainId;
+      })
+      .catch(err => {
+        let msg = err || "获取域列表失败！";
+        this.error(msg);
+      });
+  }
+  get supperList() {
+    return this.supperAppList.map(item => item.superAppName).join(",");
+  }
+  get domainFormValidate() {
+    return {
+      domainName: [
+        {
+          required: true,
+          message: "业务域名称不能为空",
+          trigger: "change"
+        }
+      ]
+    };
   }
   get dictColumns(): Array<TableColumn> {
     return [

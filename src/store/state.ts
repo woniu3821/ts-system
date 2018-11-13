@@ -2,6 +2,7 @@ import { State } from "./interface";
 
 const state: State = {
   num: 0,
+  loading: false,
   menus: [
     {
       key: "01",

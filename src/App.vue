@@ -1,6 +1,7 @@
 <template>
   <div id="app">
    <nav-wrapper default-path="/adminSetting" :menus="menus"></nav-wrapper>
+   <Spin size="large" fix v-if="this.$store.state.loading"></Spin>
   </div>
 </template>
 <script lang="ts">
@@ -23,4 +24,6 @@ export default class App extends Vue {
 #app
   .router-link-exact-active
     color #1873e0
+  .app-content
+    position relative
 </style>

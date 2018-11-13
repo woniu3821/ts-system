@@ -1,11 +1,14 @@
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { Page } from "@/store/interface";
 import { MessageConfig } from "iview";
-import { Action, Getter } from "vuex-class";
+import { Action, Getter, Mutation } from "vuex-class";
 import { SettingBase } from "@/store/interface";
-//错误信息model
 @Component
-export class Error extends Vue {
+export class Loading extends Vue {
+  @Mutation("LOADINF_SHOW") public loading!: (state: boolean) => void;
+}
+//错误信息model
+export class Error extends Loading {
   private config: MessageConfig = { content: "", duration: 3 };
   success(msg: string) {
     this.config.content = msg;
@@ -16,6 +19,7 @@ export class Error extends Vue {
     this.$Message.warning(this.config);
   }
   error(msg: string) {
+    this.loading(false);
     this.config.content = msg;
     if (typeof msg !== "object") {
       this.$Message.error(this.config);
@@ -26,8 +30,8 @@ export class Error extends Vue {
 @Component
 export class Base extends Error {
   pageInfo: Page = {
-    pageNumber: 10,
-    pageSize: 1
+    pageNumber: 1,
+    pageSize: 10
   };
   pageNumChange(num: number): void {
     this.pageInfo.pageNumber = num;
@@ -40,7 +44,8 @@ export class Base extends Error {
 @Component
 export class Setting extends Error {
   private base: SettingBase = {
-    indeterminate: true,
+    indeterminate: false,
+    allDisabled: true,
     checkAll: false,
     checkAllList: [],
     checkAllGroup: [],
@@ -52,7 +57,7 @@ export class Setting extends Error {
       }
       this.indeterminate = false;
       if (this.checkAll) {
-        this.checkAllGroup = this.checkAllList.map(item => item.domainId);
+        this.checkAllGroup = this.all();
       } else {
         this.checkAllGroup = [];
       }
@@ -68,10 +73,21 @@ export class Setting extends Error {
         this.indeterminate = false;
         this.checkAll = false;
       }
+    },
+    all(): Array<string> {
+      return this.checkAllList.map(item => item.domainId || item.appId);
+    },
+    disabled(checked: boolean): void {
+      this.allDisabled = checked;
+      this.indeterminate = false;
+      this.checkAll = false;
+      for (let item of this.checkAllList) {
+        item.isSelected = checked;
+      }
     }
   };
-  baseSpace: SettingBase = Object.assign({}, this.base);
-  domainSpace: SettingBase = Object.assign({}, this.base);
+  public baseSpace: SettingBase = Object.assign({}, this.base);
+  public domainSpace: SettingBase = Object.assign({}, this.base);
   @Action MANAGE_BASE_APPS!: () => Promise<any>;
   domainBaseApps() {
     this.MANAGE_BASE_APPS()
@@ -95,7 +111,7 @@ export class Setting extends Error {
       });
   }
 
-  private mounted() {
+  mounted() {
     this.domainBaseApps();
     this.domainApps();
   }

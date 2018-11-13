@@ -9,7 +9,12 @@ import iview from "iview";
 Vue.use(iview);
 
 Vue.config.productionTip = false;
-
+import Component from "vue-class-component";
+Component.registerHooks([
+  "beforeRouteEnter",
+  "beforeRouteLeave",
+  "beforeRouteUpdate"
+]);
 new Vue({
   router,
   store,
